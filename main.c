@@ -58,7 +58,7 @@ int main (int argc, char *argv[]){
             
             // You should update the pointer to the next token, Read about "strtok" in the manual pages.
             //	command_token = ????;
-            argscounter ++;
+            argscounter++;
         }
         // Don't forget to make your last arg = NULL.
 //		args[argscounter] = NULL;
@@ -68,12 +68,14 @@ int main (int argc, char *argv[]){
 		//}
         // Execute your command here, don't forget that you need to pass the full path, (e.g /usr/bin/mkdir)
         // Read about execv in the manula pages (man execv).
-		char* arr[] = {"ls", "-l", NULL};
-        if(fork() == 0){
-        	execvp(args[0],args);
-        } else {
-        	wait(NULL);
-        }
+		if(strcmp("quit",args[0]) == 0) exit(0);
+
+	    if(fork() == 0){
+	    	execvp(args[0],args);
+	    } else {
+	    	wait(NULL);
+	    }
+
     }
     return 0;
 }
