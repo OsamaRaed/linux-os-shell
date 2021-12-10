@@ -6,20 +6,17 @@
 #include <string.h>
 #include <unistd.h>
 
-char* myTestStrok(char str[]){
 
-	  char * pch;
-	  printf ("Splitting string \"%s\" into tokens:\n",str);
-	  pch = strtok (str," ,.-");
-	  while (pch != NULL)
-	  {
-		printf ("%s\n",pch);
-		pch = strtok (NULL, " ,.-");
-	  }
-	  return pch;
-}
-//            	char ss[] = "aaa bbb ccc ddd";
-            	//myTestStrok(ss);
+
+
+
+#define READ 0
+#define WRITE 1
+
+
+
+
+
 
 int main (int argc, char *argv[]){
     // You should get your current path here.
@@ -69,16 +66,25 @@ int main (int argc, char *argv[]){
         // Execute your command here, don't forget that you need to pass the full path, (e.g /usr/bin/mkdir)
         // Read about execv in the manula pages (man execv).
 		if(strcmp("quit",args[0]) == 0) exit(0);
-
+		if(strcmp("cd",args[0]) == 0)
+		{
+			chdir(args[1]);
+			
+		}
 	    if(fork() == 0){
+	    	//child
 	    	execvp(args[0],args);
 	    } else {
+	    	//parent
 	    	wait(NULL);
 	    }
 
     }
     return 0;
 }
+
+
+
 
 
 
