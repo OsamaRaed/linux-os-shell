@@ -14,7 +14,10 @@
 #define WRITE 1
 
 
+void myCd(){
 
+
+}
 
 
 
@@ -68,10 +71,35 @@ int main (int argc, char *argv[]){
 		if(strcmp("quit",args[0]) == 0) exit(0);
 		if(strcmp("cd",args[0]) == 0)
 		{
-			chdir(args[1]);
+			if(chdir(args[1]) == -1){
+				printf("\n\nerrrrrrrrrrrrrrrrr\n\n\n\n\n");
+				continue;
+			}  
 			
 		}
-	    if(fork() == 0){
+		else if(strcmp("help",args[0]) == 0){
+		
+			printf("\n\n\n\n\n\n\nwe are here");
+			system("bash -c help | more +10");
+			continue;
+		}
+		else if(strcmp("pause",args[0]) == 0){
+			//printf("assssssssssS");
+			//sleep(5);
+			char ch;
+			while(1){
+				ch = fgetc(stdin);
+				if(ch==0x0A)
+				{
+					break;
+				}
+				ch = getchar();
+
+			}
+			
+		
+		}
+	    else if(fork() == 0){
 	    	//child
 	    	execvp(args[0],args);
 	    } else {
