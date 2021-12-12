@@ -14,12 +14,6 @@
 #define WRITE 1
 
 
-void myCd(){
-
-
-}
-
-
 
 int main (int argc, char *argv[]){
     // You should get your current path here.
@@ -94,17 +88,22 @@ int main (int argc, char *argv[]){
 					break;
 				}
 				ch = getchar();
-
 			}
 			
 		
 		}
-	    else if(fork() == 0){
-	    	//child
-	    	execvp(args[0],args);
-	    } else {
-	    	//parent
-	    	wait(NULL);
+		else if( strcmp("myshell",args[0]) == 0){
+		
+			
+		}
+	    else {
+			if(fork() == 0){
+				//child
+				execvp(args[0],args);
+			} else {
+				//parent
+				wait(NULL);
+			}
 	    }
 
     }
