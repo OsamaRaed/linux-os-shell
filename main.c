@@ -115,26 +115,17 @@ int main (int argc, char *argv[]){
 			continue;
 		}
 		else if(strcmp("pause",args[0]) == 0){
-			//printf("assssssssssS");
-			//sleep(5);
 			char ch;
 			while(1){
-//				ch = fgetc(stdin);
-//				if(ch==0x0A)
-	//			{
-		//			break;
-				//}
-				
-				ch = getchar();
-				if ( ch == '\033') { // if the first value is esc
-					getchar(); // skip the [
-					char ccc = getchar();
-					if(ccc == 'A') break;
+				ch = fgetc(stdin);
+				if(ch==0x0A)
+				{
+					break;
 				}
+				ch = getchar();
 
 			}
-			
-		
+
 		}
 		
 		else if( strcmp("myshell",args[0]) == 0){
