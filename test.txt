@@ -1,1 +1,3 @@
+man pipe
 ls
+ls -a

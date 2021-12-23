@@ -12,43 +12,21 @@
 #define WRITE 1
 
 
-void teststrtok(char * string){
+char* parseString(char * command, char **argv){
 
-
-    char* args[11];
-    // Read about "strtok" in the manual pages (man strtok).
-    char* command_token = strtok (string, " ");
-    int argscounter = 0;
-    //printf("first cm %s \n",command_token);
-    char* pch;
-    while (command_token != NULL && argscounter < 10) {
-        if (argscounter != 0) {
-            // You will need to split your string into small strings by replacing the space character by \0 character
-        	command_token = strtok(NULL," ");
-
-        }
-        //("%s\n",command_token);
-        // I just pointed our array element to the start of the small string.
-        args[argscounter] = command_token;
-        
-        // You should update the pointer to the next token, Read about "strtok" in the manual pages.
-        //	command_token = ????;
-        argscounter++;
+    argc = 0;
+    int i = 0;
+    char *command_token = strtok(command, " \t\n"); 
+    while(command_token){
+        argv[i] = command_token;
+        argc++;
+        command_token = strtok(NULL, " \t\n");
+        i++;
     }
-    for(int i = 0; i <  10 && args[i] != NULL ;i++){
-		printf("strtok function: %s\n",args[i]);
+    argv[i] = NULL;
+    for(int i = 0; i <  10 && argv[i] != NULL ;i++){
+		printf("strtok function: %s\n",argv[i]);
 	}
-	
-	if(fork() == 0){
-		printf("fork done");
-		//child
-		execvp(args[0],args);
-	} else {
-		printf("child ddone");
-		//parent
-		wait(NULL);
-	}
-	printf("ddone");
 }
 
 int main (int argc, char *argv[]){
@@ -57,7 +35,7 @@ int main (int argc, char *argv[]){
     char currentPath[1024];
     while (1) {
         getcwd(currentPath, sizeof(currentPath));
-        printf ("%s> ", currentPath);
+        printbatchfilef ("%s> ", currentPath);
         // I've assumed that the max command we will recive is 99 characters.
         char command[100];
         
@@ -128,7 +106,7 @@ int main (int argc, char *argv[]){
 
 		}
 		
-		else if( strcmp("myshell",args[0]) == 0){
+		if( strcmp("myshell",args[0]) == 0){
 	    	printf("test to open file\n");	
 			FILE * fp;
 		    char * line = NULL;
@@ -144,13 +122,20 @@ int main (int argc, char *argv[]){
         		printf("Retrieved line of length %zu:\n", read);
         		printf("%s", line);
     		}
-    		teststrtok(line);
-    		
-    	fclose(fp);
-    	if (line)
-        	free(line);
-		}
-	    else {
+    		char* a  = teststrtok1(line);				
+			fclose(fp);
+			
+			if(fork() == 0){
+				//child
+				if (strcmp("environ",args[0]) == 0) execvp("env",args);
+				else execvp(args[0],args);
+				
+			} else {
+				//parent
+				wait(NULL);
+			}
+
+		} else {
 			if(fork() == 0){
 				//child
 			if (strcmp("environ",args[0]) == 0) execvp("env",args);
