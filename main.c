@@ -12,6 +12,44 @@
 #define WRITE 1
 
 
+void teststrtok(char * string){
+
+
+    char* args[11];
+    // Read about "strtok" in the manual pages (man strtok).
+    char* command_token = strtok (string, " ");
+    int argscounter = 0;
+    //printf("first cm %s \n",command_token);
+    char* pch;
+    while (command_token != NULL && argscounter < 10) {
+        if (argscounter != 0) {
+            // You will need to split your string into small strings by replacing the space character by \0 character
+        	command_token = strtok(NULL," ");
+
+        }
+        //("%s\n",command_token);
+        // I just pointed our array element to the start of the small string.
+        args[argscounter] = command_token;
+        
+        // You should update the pointer to the next token, Read about "strtok" in the manual pages.
+        //	command_token = ????;
+        argscounter++;
+    }
+    for(int i = 0; i <  10 && args[i] != NULL ;i++){
+		printf("strtok function: %s\n",args[i]);
+	}
+	
+	if(fork() == 0){
+		printf("fork done");
+		//child
+		execvp(args[0],args);
+	} else {
+		printf("child ddone");
+		//parent
+		wait(NULL);
+	}
+	printf("ddone");
+}
 
 int main (int argc, char *argv[]){
     // You should get your current path here.
@@ -44,7 +82,7 @@ int main (int argc, char *argv[]){
             	command_token = strtok(NULL," ");
 
             }
-            //printf("%s\n",command_token);
+            //("%s\n",command_token);
             // I just pointed our array element to the start of the small string.
             args[argscounter] = command_token;
             
@@ -81,12 +119,19 @@ int main (int argc, char *argv[]){
 			//sleep(5);
 			char ch;
 			while(1){
-				ch = fgetc(stdin);
-				if(ch==0x0A)
-				{
-					break;
-				}
+//				ch = fgetc(stdin);
+//				if(ch==0x0A)
+	//			{
+		//			break;
+				//}
+				
 				ch = getchar();
+				if ( ch == '\033') { // if the first value is esc
+					getchar(); // skip the [
+					char ccc = getchar();
+					if(ccc == 'A') break;
+				}
+
 			}
 			
 		
@@ -108,6 +153,11 @@ int main (int argc, char *argv[]){
         		printf("Retrieved line of length %zu:\n", read);
         		printf("%s", line);
     		}
+    		teststrtok(line);
+    		
+    	fclose(fp);
+    	if (line)
+        	free(line);
 		}
 	    else {
 			if(fork() == 0){
