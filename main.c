@@ -38,13 +38,10 @@ bool isInternalCommand(char** command){
 		isInternal = false;
 		
 	}
-	else if(strcmp("help",command[0]) == 0){
+	else if(strcmp("pause",command[0]) == 0){
 		isInternal = false;
 	    while(getchar() != '\n');
 	}
-	
-	
-	    while(getchar() != '\n');
 
 	printf("isInternal??%d",isInternal);
 }
