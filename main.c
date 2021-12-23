@@ -81,29 +81,29 @@ int main (int argc, char *argv[]){
 		    
 		    // I've assumed that the max number of args is 10 + 1 (Last one should be NULL).
 		    char* args[11];
-		    
+			parseString(command,args);
 		    // Read about "strtok" in the manual pages (man strtok).
-		    char* command_token = strtok (command, " ");
+//		    char* command_token = strtok (command, " ");
 		    
-		    int argscounter = 0;
+//		    int argscounter = 0;
 		    //printf("first cm %s \n",command_token);
-		    char* pch;
-		    while (command_token != NULL && argscounter < 10) {
-		        if (argscounter != 0) {
+//		    char* pch;
+//		    while (command_token != NULL && argscounter < 10) {
+	//	        if (argscounter != 0) {
 		            // You will need to split your string into small strings by replacing the space character by \0 character
-		        	command_token = strtok(NULL," ");
+		//        	command_token = strtok(NULL," ");
 
-		        }
+		  //      }
 		        //("%s\n",command_token);
 		        // I just pointed our array element to the start of the small string.
-		        args[argscounter] = command_token;
+		    //    args[argscounter] = command_token;
 		        
 		        // You should update the pointer to the next token, Read about "strtok" in the manual pages.
 		        //	command_token = ????;
-		        argscounter++;
-		    }
+		      //  argscounter++;
+		    //}
 		    // Don't forget to make your last arg = NULL.
-			args[argscounter] = NULL;
+			//args[argscounter] = NULL;
 			for(int i = 0; i <  10 && args[i] != NULL ;i++){
 				printf("%s\n",args[i]);
 			}

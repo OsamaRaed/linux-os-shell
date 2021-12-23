@@ -59,9 +59,6 @@ int main (int argc, char *argv[]){
     	}
 		fclose(fp);
 	} else {
-		
 		printf("not implemneted\n");
-		
-		
 	}
  }
