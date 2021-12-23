@@ -67,6 +67,16 @@ char* parseString(char * command, char **argv){
 	}
 }
 
+int chackIORedirection(char* string){
+	char *pointer = string;
+	while(*pointer != '\0'){
+		if(*pointer == '<' && *pointer == '>'){
+			return 1;
+		}
+		pointer++;
+	}
+	return 0;
+}
 
 int chackAndOp(char* string){
 	char *pointer = string;
@@ -81,7 +91,6 @@ int chackAndOp(char* string){
 }
 
 void runShell(char* command){
-	chackAndOp(command);
 	printf("run shell\n");
 	char* argv[11];
 	parseString(command,argv);
@@ -112,53 +121,72 @@ int handleAndOp(char* string){
 	}
 	runShell(string);	
 }
+void handleIORedirection(char * command){
+	printf("not implemented yet");
+	exit(0);
+}
 
+void runShellByType(char* command){
+
+	if(chackAndOp(command)){
+    	handleAndOp(command);
+    } else if (chackIORedirection(command)){
+    	handleIORedirection(command);
+    } else {
+    	runShell(command);
+    }
+
+}
+
+
+void readCommandsfromFile(char ** argv){
+	printf("test to open file\n");	
+	FILE * fp;
+	char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+	fp = fopen(argv[1], "r");
+	if (fp == NULL){
+		printf("fail to open file\n");
+		exit(1);
+	}
+	    
+	while ((read = getline(&line, &len, fp)) != -1) {
+		printf("Retrieved line of length %zu:\n", read);
+		printf("%s", line);
+		runShellByType(line);
+	}
+	fclose(fp);
+}
+
+void startMainShell(){
+    char currentPath[1024];
+	while (1) {
+	    getcwd(currentPath, sizeof(currentPath));
+	    printf("%s> ", currentPath);
+	    // I've assumed that the max command we will recive is 99 characters.
+	    char command[100];
+	    
+	    // Scanning a string util we face a \n (enter) 
+	    scanf ("%[^\n]99s", command);
+	    
+	    // Consume the last \n so our next scan will wait ;)
+	    getchar ();
+	    runShellByType(command);
+	}
+}
 
 int main (int argc, char *argv[]){
     if(argc > 1){
-    
-    	printf("test to open file\n");	
-		FILE * fp;
-		char * line = NULL;
-	    size_t len = 0;
-        ssize_t read;
-		fp = fopen(argv[1], "r");
-		if (fp == NULL){
-			printf("fail to open file\n");
-			exit(1);
-		}
-		    
-		while ((read = getline(&line, &len, fp)) != -1) {
-    		printf("Retrieved line of length %zu:\n", read);
-    		printf("%s", line);
-    		runShell(line);
-    	}
-		fclose(fp);
-
+		readCommandsfromFile(argv);
     } else {
-    
-        char currentPath[1024];
-		while (1) {
-		    getcwd(currentPath, sizeof(currentPath));
-		    printf("%s> ", currentPath);
-		    // I've assumed that the max command we will recive is 99 characters.
-		    char command[100];
-		    
-		    // Scanning a string util we face a \n (enter) 
-		    scanf ("%[^\n]99s", command);
-		    
-		    // Consume the last \n so our next scan will wait ;)
-		    getchar ();
-			if(chackAndOp(command)){
-		    	handleAndOp(command);
-		    } else {
-		    	runShell(command);
-		    }
-		    
-		}
+		startMainShell();
 	}
     return 0;
 }
+
+
+
 
 
 

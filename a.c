@@ -6,17 +6,17 @@
 #include <string.h>
 #include <unistd.h>
 
-int chackAndOp(char* string){
+int chackIORedirection(char* string){
 	char *pointer = string;
 	while(*pointer != '\0'){
-		if(*pointer == '&' && *(pointer + 1) == ' ' && *(pointer - 1) == ' '){
+		if(*pointer == '<' && *pointer == '>'){
 			return 1;
 		}
-
 		pointer++;
 	}
 	return 0;
 }
+
 
 int handleAndOp(char* string){
 
