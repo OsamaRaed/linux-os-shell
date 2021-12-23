@@ -7,15 +7,31 @@
 #include <unistd.h>
 
 
+char* parseString(char * command, char **argv){
 
+    int argc = 0;
+    int i = 0;
+    char *command_token = strtok(command, " \t\n"); 
+    while(command_token){
+        argv[i] = command_token;
+        argc++;
+        command_token = strtok(NULL, " \t\n");
+        i++;
+    }
+    argv[i] = NULL;
+    for(int i = 0; i <  10 && argv[i] != NULL ;i++){
+		printf("strtok function: %s\n",argv[i]);
+	}
+}
 
 
 
 void runShell(char* command){
+	char* argv[10];
+	parseString(command,argv);
 	if(fork() == 0){
 		//child
-		if (strcmp("environ",args[0]) == 0) execvp("env",args);
-		else execvp(args[0],args);
+		execvp(argv[0],argv);
 	} else {
 		//parent
 		wait(NULL);
@@ -39,12 +55,12 @@ int main (int argc, char *argv[]){
 		while ((read = getline(&line, &len, fp)) != -1) {
     		printf("Retrieved line of length %zu:\n", read);
     		printf("%s", line);
-    		runShell();
+    		runShell(line);
     	}
 		fclose(fp);
 	} else {
 		
-		
+		printf("not implemneted\n");
 		
 		
 	}
