@@ -11,6 +11,9 @@
 #define READ 0
 #define WRITE 1
 
+
+
+
 //will return bool 0 or 1
 bool isInternalCommand(char** command){
 	int isInternal = true;
@@ -43,7 +46,7 @@ bool isInternalCommand(char** command){
 	    while(getchar() != '\n');
 	}
 
-	printf("isInternal??%d",isInternal);
+	printf("isInternal??%d\n",isInternal);
 }
 
 
@@ -65,13 +68,26 @@ char* parseString(char * command, char **argv){
 }
 
 
+int chackAndOp(char* string){
+	char *pointer = string;
+	while(*pointer != '\0'){
+		if(*pointer == '&' && *(pointer + 1) == ' ' && *(pointer - 1) == ' '){
+			return 1;
+		}
+
+		pointer++;
+	}
+	return 0;
+}
+
 void runShell(char* command){
+	chackAndOp(command);
 	printf("run shell\n");
 	char* argv[11];
 	parseString(command,argv);
 	bool condition = isInternalCommand(argv);
 	if(condition){
-		printf("is not internal\n");
+		printf("is not internal %d\n",condition);
 		if(fork() == 0){
 			//child
 			execvp(argv[0],argv);
@@ -82,6 +98,20 @@ void runShell(char* command){
 	}
 }
 
+int handleAndOp(char* string){
+
+	char* pointer = string;
+	while(*pointer != '\0'){
+		if(*pointer == '&'){
+			*pointer = '\0';
+			runShell(string);
+			string = pointer + 2;	
+		}
+		printf("returned%c \n",*pointer);
+		pointer++;
+	}
+	runShell(string);	
+}
 
 
 int main (int argc, char *argv[]){
@@ -119,14 +149,16 @@ int main (int argc, char *argv[]){
 		    
 		    // Consume the last \n so our next scan will wait ;)
 		    getchar ();
-		    runShell(command);
+			if(chackAndOp(command)){
+		    	handleAndOp(command);
+		    } else {
+		    	runShell(command);
+		    }
 		    
 		}
 	}
     return 0;
 }
-
-	
 
 
 
