@@ -8,8 +8,6 @@
 
 
 
-
-
 #define READ 0
 #define WRITE 1
 
@@ -55,10 +53,10 @@ int main (int argc, char *argv[]){
             argscounter++;
         }
         // Don't forget to make your last arg = NULL.
-//		args[argscounter] = NULL;
-	//	for(int i = 0; i <  10 && args[i] != NULL ;i++){
-		//	printf("%s\n",args[i]);
-		
+		args[argscounter] = NULL;
+		for(int i = 0; i <  10 && args[i] != NULL ;i++){
+			printf("%s\n",args[i]);
+		}
 		//}
         // Execute your command here, don't forget that you need to pass the full path, (e.g /usr/bin/mkdir)
         // Read about execv in the manula pages (man execv).
@@ -71,6 +69,7 @@ int main (int argc, char *argv[]){
 			}  
 			
 		}
+
 		else if(strcmp("help",args[0]) == 0){
 		
 			printf("\n\n\n\n\n\n\nwe are here");
@@ -92,14 +91,29 @@ int main (int argc, char *argv[]){
 			
 		
 		}
-		else if( strcmp("myshell",args[0]) == 0){
 		
-			
+		else if( strcmp("myshell",args[0]) == 0){
+	    	printf("test to open file\n");	
+			FILE * fp;
+		    char * line = NULL;
+	        size_t len = 0;
+            ssize_t read;
+			fp = fopen(args[1], "r");
+		    if (fp == NULL){
+		    	printf("fail to open file\n");
+		    	continue;
+		    }
+		        
+		    while ((read = getline(&line, &len, fp)) != -1) {
+        		printf("Retrieved line of length %zu:\n", read);
+        		printf("%s", line);
+    		}
 		}
 	    else {
 			if(fork() == 0){
 				//child
-				execvp(args[0],args);
+			if (strcmp("environ",args[0]) == 0) execvp("env",args);
+			else execvp(args[0],args);
 			} else {
 				//parent
 				wait(NULL);
@@ -110,7 +124,7 @@ int main (int argc, char *argv[]){
     return 0;
 }
 
-
+	
 
 
 
