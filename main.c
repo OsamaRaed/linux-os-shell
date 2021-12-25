@@ -6,10 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
-
-
-#define READ 0
-#define WRITE 1
+#include <sys/stat.h>
+#include <fcntl.h>
 
 
 
@@ -45,8 +43,6 @@ bool isInternalCommand(char** command){
 		isInternal = false;
 	    while(getchar() != '\n');
 	}
-
-	printf("isInternal??%d\n",isInternal);
 }
 
 
@@ -54,23 +50,23 @@ char* parseString(char * command, char **argv){
 
     int argc = 0;
     int i = 0;
-    char *command_token = strtok(command, " \t\n"); 
+    char *command_token = strtok(command, " <>\t\n"); 
     while(command_token){
         argv[i] = command_token;
         argc++;
-        command_token = strtok(NULL, " \t\n");
+        command_token = strtok(NULL, " <>\t\n");
         i++;
     }
     argv[i] = NULL;
-    for(int i = 0; i <  10 && argv[i] != NULL ;i++){
-		printf("strtok function: %s\n",argv[i]);
-	}
+//    for(int i = 0; i <  10 && argv[i] != NULL ;i++){
+//		printf("strtok function: %s\n",argv[i]);
+//	}
 }
 
 int chackIORedirection(char* string){
 	char *pointer = string;
 	while(*pointer != '\0'){
-		if(*pointer == '<' && *pointer == '>'){
+		if(*pointer == '<' || *pointer == '>'){
 			return 1;
 		}
 		pointer++;
@@ -121,9 +117,69 @@ int handleAndOp(char* string){
 	}
 	runShell(string);	
 }
+void IORedirection(char * command,int input,int output){
+	char* argv[3]; 
+	parseString(command,argv);
+	int stdin_copy = dup(0);
+	if (fork() == 0){
+		if (input){
+			close(0);
+		    int fd0 = open(argv[1], O_RDONLY);
+		    dup2(fd0, 0);
+		    char* a[2];
+			a[0] = argv[0];
+			a[1] = NULL;
+		    execvp(*argv,a);
+		    
+		} 
+		if (output)
+		{
+		    int fd1;
+			if(open(argv[1] , O_RDWR)){
+		    	FILE *fp = fopen(argv[1], "ab+");
+		    }
+		    if(output == 1){
+		    	fd1 = open(argv[1] , O_RDWR) ;
+		    } else {
+		    	fd1 = open(argv[1] , O_RDWR | O_APPEND) ;
+		    }
+		    dup2(fd1, STDOUT_FILENO);
+	    	char* a[2];
+			a[0] = argv[0];
+			a[1] = NULL;
+		    close(fd1);
+		    execvp(*argv,a);
+		}
+				    
+	}
+	else {
+		wait(NULL);
+		if(input){
+			dup2(stdin_copy, 0);
+			close(stdin_copy);
+		}
+			
+
+	}
+}
 void handleIORedirection(char * command){
-	printf("not implemented yet");
-	exit(0);
+	char *pointer = command;
+	while(*pointer != '\0'){
+		if(*pointer == '<'){
+		
+			IORedirection(command,1,0);
+			break;
+		} 
+		else if(*pointer == '>'){
+			if(*(pointer + 1) == '>') {
+				IORedirection(command,0,2);
+			} else {
+				IORedirection(command,0,1);
+			}
+			break;
+		} 
+		pointer++;
+	}
 }
 
 void runShellByType(char* command){
@@ -184,20 +240,6 @@ int main (int argc, char *argv[]){
 	}
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
